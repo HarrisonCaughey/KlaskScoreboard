@@ -1,6 +1,6 @@
 import React from "react";
-import {Button, Container, Dropdown, Form} from "react-bootstrap";
-
+import {Button, Container, Dropdown, Form, Table} from "react-bootstrap";
+import {saveGame} from "../services/api";
 
 export class RecordGame extends React.Component {
 
@@ -8,30 +8,85 @@ export class RecordGame extends React.Component {
         super(props);
         this.state = {
             rounds: 3,
-            playerOne: "",
-            playerTwo: "",
-            score: [],
+            playerOne: null,
+            playerTwo: null,
+            score: [["", ""], ["", ""], ["", ""], ["", ""], ["", ""]],
         }
-        this.updatePlayerOne = this.updatePlayerTwo.bind(this);
+        this.updatePlayerOne = this.updatePlayerOne.bind(this);
         this.updatePlayerTwo = this.updatePlayerTwo.bind(this);
         this.updateScore = this.updateScore.bind(this);
         this.updateRounds = this.updateRounds.bind(this);
+        this.submit = this.submit.bind(this);
+        this.playerOneWins = this.playerOneWins.bind(this);
     }
 
-    updatePlayerTwo(name) {
-        this.setState({playerTwo: name});
+    submit() {
+        let playerOneVictory = this.playerOneWins();
+        let game = {
+            player_one: this.state.playerOne,
+            player_two: this.state.playerTwo,
+            player_one_win: playerOneVictory,
+            score: this.formatScore(),
+            date_played: new Date().toISOString(),
+        }
+        console.log(game)
+        try {
+            saveGame(game).then((res) => {
+                console.log(res)
+            })
+        } catch {
+            console.log("Error saving a game")
+        }
     }
 
-    updatePlayerOne(name) {
-        this.setState({playerOne: name});
+    formatScore() {
+        let result = []
+        for (let i = 0; i < this.state.rounds; i++) {
+            let round = `${this.state.score[i][0]}-${this.state.score[i][1]}`
+            result.push(round)
+        }
+        console.log(result)
+        return result
     }
 
-    updateRounds(rounds) {
-        this.setState({rounds: rounds});
+    playerOneWins() {
+        let victories = 0
+        let losses = 0
+        for (let i = 0; i < this.state.rounds; i++) {
+            this.state.score[i][0] > this.state.score[i][1] ? victories++ : losses++
+        }
+        return victories > losses;
     }
 
-    updateScore(score) {
+    updatePlayerOne(change, event) {
+        this.setState({playerOne: event.target.value});
+    }
 
+    updatePlayerTwo(change, event) {
+        this.setState({playerTwo: event.target.value});
+    }
+
+    updateRounds(event) {
+        this.setState({rounds: event.target.tabIndex});
+    }
+
+    updateScore(event) {
+        if (event.target.value === "") {
+            let score = this.state.score
+            score[event.target.tabIndex][parseInt(event.target.name)] = event.target.value
+            this.setState({score: score})
+        } else {
+            try {
+                let value = parseInt(event.target.value)
+                if (value >= 0 && value <= 6) {
+                    let score = this.state.score
+                    score[event.target.tabIndex][parseInt(event.target.name)] = event.target.value
+                    this.setState({score: score})
+                }
+            }
+            catch (e) {
+            }
+        }
     }
 
     render() {
@@ -42,30 +97,72 @@ export class RecordGame extends React.Component {
                         <Form.Label>Rounds Played:</Form.Label>
                         <Dropdown>
                             <Dropdown.Toggle variant="success" id="dropdown-basic">
-                                Dropdown Button
+                                {this.state.rounds}
                             </Dropdown.Toggle>
-
                             <Dropdown.Menu>
-                                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+                                <Dropdown.Item tabIndex={1} onClick={this.updateRounds}>1</Dropdown.Item>
+                                <Dropdown.Item tabIndex={2} onClick={this.updateRounds}>2</Dropdown.Item>
+                                <Dropdown.Item tabIndex={3} onClick={this.updateRounds}>3</Dropdown.Item>
+                                <Dropdown.Item tabIndex={4} onClick={this.updateRounds}>4</Dropdown.Item>
+                                <Dropdown.Item tabIndex={5} onClick={this.updateRounds}>5</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                     </Form.Group>
 
+                    <div>
                     <Form.Group className="mb-3" controlId="formPlayerOne">
                         <Form.Label>Player One:</Form.Label>
-                        <Form.Control type="password" placeholder="Harrison" onChange={this.updatePlayerOne}/>
+                        <Form.Control type="value" placeholder="Harrison" aria-required="true" onChange={this.updatePlayerOne.bind(this, 'value')}/>
                     </Form.Group>
+                    </div>
+                    <div>
                     <Form.Group className="mb-3" controlId="formPlayerTwo">
                         <Form.Label>Player Two:</Form.Label>
-                        <Form.Control type="password" placeholder="Khalil" onChange={this.updatePlayerTwo}/>
+                        <Form.Control type="text" placeholder="Khalil" aria-required="true" onChange={this.updatePlayerTwo.bind(this, 'value')}/>
+                    </Form.Group>
+                    </div>
+                    <Form.Group className="mb-3" controlId="formPlayerTwo">
+                        <Form.Label>Scores:</Form.Label>
+                        <Table>
+                            <thead>
+                            <tr>
+                                <th>Round</th>
+                                <th>{this.state.playerOne || "Player One"}</th>
+                                <th>{this.state.playerTwo || "Player Two"}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            { this.state.score.map((value, index) => {
+                                let readOnly = index >= this.state.rounds;
+                                return (
+                                        <tr key={index} color={"#6c757d"}>
+                                            <td>{index + 1}</td>
+                                            <td>
+                                                <input hidden={readOnly}
+                                                       value={this.state.score[index][0]}
+                                                       name="0"
+                                                       tabIndex={index}
+                                                       onChange={this.updateScore}/>
+                                            </td>
+                                            <td>
+                                                <input hidden={readOnly}
+                                                       value={this.state.score[index][1]}
+                                                       name="1"
+                                                       tabIndex={index}
+                                                       onChange={this.updateScore}/>
+                                            </td>
+                                        </tr>
+                                )
+                            })}
+                            </tbody>
+                        </Table>
                     </Form.Group>
 
-                    <Button variant="primary" type="submit">
-                        Submit
-                    </Button>
-
+                    <footer className="modal-card-foot">
+                        <a className="button" onClick={this.submit}>
+                            Submit
+                        </a>
+                    </footer>
                 </Form>
             </div>
         )

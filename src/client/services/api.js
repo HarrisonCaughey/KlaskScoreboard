@@ -9,3 +9,10 @@ export function getGames() {
         console.error(err);
     })
 }
+
+export function saveGame(game) {
+    return axios.post(`${serverPath}/api/games`, {game: game})
+        .catch((err) => {
+            console.error(err);
+        })
+}

@@ -38,17 +38,17 @@ app.get('/api/games', (req, res) => {
             });
 })
 
-app.put('/api/games', (req, res) => {
+app.post('/api/games', (req, res) => {
     console.log(req.data)
-    db.insert(req.data)
-            .into('game')
-            .then((data) => {
-                console.log(data);
-                res.json(data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+    // db.insert(req.data)
+    //         .into('game')
+    //         .then((data) => {
+    //             console.log(data);
+    //             res.json(data);
+    //         })
+    //         .catch((err) => {
+    //             console.log(err);
+    //         });
 })
 
 app.listen(port, () => {
