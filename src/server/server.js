@@ -27,6 +27,7 @@ app.use(function (req, res, next) {
 });
 
 app.get('/api/games', (req, res) => {
+    console.log(`Getting games in server.js`)
     db.select('*')
             .from('game')
             .then((data) => {
@@ -39,16 +40,23 @@ app.get('/api/games', (req, res) => {
 })
 
 app.post('/api/games', (req, res) => {
-    console.log(req.data)
-    // db.insert(req.data)
-    //         .into('game')
-    //         .then((data) => {
-    //             console.log(data);
-    //             res.json(data);
-    //         })
-    //         .catch((err) => {
-    //             console.log(err);
-    //         });
+    console.log(`Posting to games in server.js`)
+    console.log(req)
+    let game = req.body.game
+    db('game').insert(
+            {player_one: game.player_one,
+                player_two: game.player_two,
+                player_one_win: game.player_one_win,
+                score: game.score,
+                date_played: game.date_played,
+    })
+            .then((data) => {
+                console.log(data);
+                res.json(data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
 })
 
 app.listen(port, () => {

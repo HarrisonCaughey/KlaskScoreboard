@@ -3,12 +3,8 @@ import {Pages} from "./constants/pages";
 import {NavBar} from "./pages/header";
 import {getGames} from "./services/api";
 
-// import "bulma";
-// import "font-awesome/css/font-awesome.css";
-// import "toastr/toastr.scss";
-// import "./stylesheets/bulma-overrides.sass";
-// import "./stylesheets/mocks.css";
-
+import "bulma";
+import "toastr/toastr.scss";
 
 
 export class App extends React.Component {

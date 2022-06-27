@@ -11,6 +11,7 @@ export function getGames() {
 }
 
 export function saveGame(game) {
+    console.log(`doing axios.post in api.saveGame()`)
     return axios.post(`${serverPath}/api/games`, {game: game})
         .catch((err) => {
             console.error(err);

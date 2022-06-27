@@ -9,6 +9,7 @@ import {Home} from "./home";
 import {Scoreboard} from "./scoreboard";
 import {PlayerStats} from "./player-stats";
 import 'bootstrap/dist/css/bootstrap.css';
+import "toastr/toastr.scss";
 import {RecordGame} from "./record-game";
 
 export class NavBar extends React.Component {

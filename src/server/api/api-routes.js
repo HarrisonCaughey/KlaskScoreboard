@@ -12,6 +12,9 @@ const db = knex({
     },
 });
 
+// This isn't actually being used
+// TODO: remove
+
 const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());

@@ -1,6 +1,7 @@
 import React from "react";
-import {Button, Container, Dropdown, Form, Table} from "react-bootstrap";
+import {Dropdown, Form, Table} from "react-bootstrap";
 import {saveGame} from "../services/api";
+import toastr from "toastr"
 
 export class RecordGame extends React.Component {
 
@@ -21,22 +22,45 @@ export class RecordGame extends React.Component {
     }
 
     submit() {
-        let playerOneVictory = this.playerOneWins();
-        let game = {
-            player_one: this.state.playerOne,
-            player_two: this.state.playerTwo,
-            player_one_win: playerOneVictory,
-            score: this.formatScore(),
-            date_played: new Date().toISOString(),
+        if (this.validFields()) {
+            let playerOneVictory = this.playerOneWins();
+            let game = {
+                player_one: this.state.playerOne,
+                player_two: this.state.playerTwo,
+                player_one_win: playerOneVictory,
+                score: this.formatScore(),
+                date_played: new Date().toISOString(),
+            }
+            console.log(game)
+            try {
+                saveGame(game).then((res) => {
+                    console.log(res)
+                })
+            }
+            catch {
+                console.log("Error saving a game")
+            }
         }
-        console.log(game)
+    }
+
+    validFields() {
         try {
-            saveGame(game).then((res) => {
-                console.log(res)
-            })
-        } catch {
-            console.log("Error saving a game")
+            if (!(this.state.playerOne && this.state.playerTwo)) {
+                toastr.error("Invalid Player Names")
+                return false;
+            }
+            for (let i = 0; i < this.state.rounds; i++) {
+                let [score1, score2] = this.state.score[i]
+                if (score1 !== "6" && score2 !== "6") {
+                    toastr.error("Invalid scores: at least one score for each round must be 6")
+                    return false;
+                }
+            }
+        } catch (e) {
+            toastr.error("Unhandled error when validating fields")
+            return false;
         }
+        return true;
     }
 
     formatScore() {
@@ -94,8 +118,8 @@ export class RecordGame extends React.Component {
             <div>
                 <Form style={{padding: 100}}>
                     <Form.Group className="mb-3" controlId="formRounds">
-                        <Form.Label>Rounds Played:</Form.Label>
-                        <Dropdown>
+                        <Form.Label>{"Rounds Played:  "}</Form.Label>
+                        <Dropdown style={{paddingLeft: 5}}>
                             <Dropdown.Toggle variant="success" id="dropdown-basic">
                                 {this.state.rounds}
                             </Dropdown.Toggle>
