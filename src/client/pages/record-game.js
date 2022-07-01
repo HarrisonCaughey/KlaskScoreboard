@@ -1,7 +1,7 @@
 import React from "react";
 import Select from "react-select";
 import {Col, Dropdown, Form, Row, Table} from "react-bootstrap";
-import {saveGame, getPlayers} from "../services/api";
+import {saveGame, getPlayers, updatePlayer} from "../services/api";
 import toastr from "toastr"
 
 export class RecordGame extends React.Component {
@@ -13,7 +13,9 @@ export class RecordGame extends React.Component {
             playerOne: null,
             playerTwo: null,
             score: [["", ""], ["", ""], ["", ""], ["", ""], ["", ""]],
-            players: null
+            players: null,
+            value: {label: '', key : '001'},
+            value2: {label: '', key : '002'}
         }
         this.updatePlayerOne = this.updatePlayerOne.bind(this);
         this.updatePlayerTwo = this.updatePlayerTwo.bind(this);
@@ -30,6 +32,24 @@ export class RecordGame extends React.Component {
                 players.data[i].value = `${players.data[i].id}`;
             }
             this.setState({ players: players.data });
+        })
+    }
+
+    resetState() {
+        getPlayers().then((players) => {
+            for (let i = 0; i < players.data.length; i++) {
+                players.data[i].label = `${players.data[i].name}`;
+                players.data[i].value = `${players.data[i].id}`;
+            }
+            this.setState({
+                rounds: 3,
+                playerOne: null,
+                playerTwo: null,
+                score: [["", ""], ["", ""], ["", ""], ["", ""], ["", ""]],
+                players: players.data,
+                value: {label: '', key : '001'},
+                value2: {label: '', key : '002'}
+            })
         })
     }
 
@@ -56,13 +76,66 @@ export class RecordGame extends React.Component {
                     }
 
                     // Update player info
-
+                    let [player_one, player_two] = this.getPlayerStats(game);
+                    updatePlayer(player_one, this.state.playerOne.id).then(() => {
+                        updatePlayer(player_two, this.state.playerTwo.id).then(() => {
+                            this.resetState();
+                        })
+                    }).catch(() => {
+                        toastr.error("Unhandled error when updating player stats")
+                    })
                 })
             }
             catch {
                 toastr.error("Error recording game")
             }
         }
+    }
+
+    getPlayerStats(game) {
+        let player_one = structuredClone(this.state.playerOne);
+        let player_two = structuredClone(this.state.playerTwo);
+        if (game.player_one_win) {
+            player_one.games_won++
+            player_two.games_lost++
+        } else {
+            player_two.games_won++
+            player_one.games_lost++
+        }
+        let p1RoundsWon = 0
+        let p2RoundsWon = 0
+        let p1PointsWon = 0
+        let p2PointsWon = 0
+        for (let i = 0; i < game.score.length; i++) {
+            let round = game.score[i]
+            let [score1, score2] = round.split('-')
+            p1PointsWon += parseInt(score1)
+            p2PointsWon += parseInt(score2)
+            if (score1 > score2) {
+                p1RoundsWon++;
+            } else {
+                p2RoundsWon++;
+            }
+        }
+        player_one.rounds_won += p1RoundsWon;
+        player_one.rounds_lost += p2RoundsWon;
+        player_two.rounds_won += p2RoundsWon;
+        player_two.rounds_lost += p1RoundsWon;
+        player_one.points_won += p1PointsWon;
+        player_one.points_lost += p2PointsWon;
+        player_two.points_won += p2PointsWon;
+        player_two.points_lost += p1PointsWon;
+        delete player_one.label;
+        delete player_one.name;
+        delete player_one.game_history;
+        delete player_one.value;
+        delete player_one.id;
+        delete player_two.label;
+        delete player_two.name;
+        delete player_two.game_history;
+        delete player_two.value;
+        delete player_two.id;
+        return [player_one, player_two]
     }
 
     isDraw() {
@@ -120,7 +193,6 @@ export class RecordGame extends React.Component {
             let round = `${this.state.score[i][0]}-${this.state.score[i][1]}`
             result.push(round)
         }
-        console.log(result)
         return result
     }
 
@@ -160,6 +232,7 @@ export class RecordGame extends React.Component {
                 }
             }
             catch (e) {
+                toastr.error("Uncaught error when updating score")
             }
         }
     }
@@ -191,11 +264,16 @@ export class RecordGame extends React.Component {
                                     this.state.playerTwo ?
                                     <Select options={this.state.players.filter(player => player.name !== this.state.playerTwo.name)}
                                             key={this.state.players}
-                                            onChange={(value) => this.updatePlayerOne(value)}>
+                                            value={this.state.value}
+                                            onChange={(value) => {this.updatePlayerOne(value)
+                                                this.setState({value: value})}}>
                                     </Select>
                                             :
-                                    <Select options={this.state.players} key={this.state.players}
-                                            onChange={(value) => this.updatePlayerOne(value)}>
+                                    <Select options={this.state.players}
+                                            key={this.state.players}
+                                            value={this.state.value}
+                                            onChange={(value) => {this.updatePlayerOne(value)
+                                                this.setState({value: value})}}>
                                     </Select>
                                     : null
                             }
@@ -206,11 +284,16 @@ export class RecordGame extends React.Component {
                                     this.state.playerOne ?
                                     <Select options={this.state.players.filter(player => player.name !== this.state.playerOne.name)}
                                             key={this.state.players}
-                                            onChange={(value) => this.updatePlayerTwo(value)}>
+                                            value={this.state.value2}
+                                            onChange={(value) => {this.updatePlayerTwo(value)
+                                            this.setState({value2: value})}}>
                                     </Select>
                                             :
-                                    <Select options={this.state.players} key={this.state.players}
-                                            onChange={(value) => this.updatePlayerTwo(value)}>
+                                    <Select options={this.state.players}
+                                            key={this.state.players}
+                                            value={this.state.value2}
+                                            onChange={(value) => {this.updatePlayerTwo(value)
+                                                this.setState({value2: value})}}>
                                     </Select>
                                     : null
                             }
@@ -255,7 +338,7 @@ export class RecordGame extends React.Component {
                     </Form.Group>
 
                     <footer>
-                        <a className="button" href="/#" onClick={this.submit}>
+                        <a className="button" onClick={this.submit}>
                             Submit
                         </a>
                     </footer>

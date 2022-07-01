@@ -28,13 +28,11 @@ app.use(function (req, res, next) {
 });
 
 app.get('/api/games', (req, res) => {
-    console.log(`Getting games with player names in server.js`)
     db.select('Game.id', 'Game.date_played', 'Game.player_one', 'Game.player_two', 'Game.score', 'Game.player_one_win', 'Player.name as p1_name', 'Player2.name as p2_name')
             .from('Game')
             .leftJoin('Player', 'Game.player_one', 'Player.id')
             .leftJoin('Player as Player2', 'Game.player_two', 'Player2.id')
             .then((data) => {
-                console.log(data);
                 res.json(data);
             })
             .catch((err) => {
@@ -42,22 +40,7 @@ app.get('/api/games', (req, res) => {
             });
 })
 
-// app.get('/api/games', (req, res) => {
-//     console.log(`Getting games in server.js`)
-//     db.select('*')
-//             .from('Game')
-//             .then((data) => {
-//                 console.log(data);
-//                 res.json(data);
-//             })
-//             .catch((err) => {
-//                 console.log(err);
-//             });
-// })
-
 app.post('/api/games', (req, res) => {
-    console.log(`Posting to games in server.js`)
-    console.log(req)
     let game = req.body.game
     db('Game').insert(
             {player_one: game.player_one,
@@ -67,7 +50,6 @@ app.post('/api/games', (req, res) => {
                 date_played: game.date_played,
     })
             .then((data) => {
-                console.log(data);
                 res.json(data);
             })
             .catch((err) => {
@@ -76,11 +58,9 @@ app.post('/api/games', (req, res) => {
 })
 
 app.get('/api/players', (req, res) => {
-    console.log(`Getting players in server.js`)
     db.select('*')
             .from('Player')
             .then((data) => {
-                console.log(data);
                 res.json(data);
             })
             .catch((err) => {
@@ -88,53 +68,16 @@ app.get('/api/players', (req, res) => {
             });
 })
 
+app.put('/api/players', (req, res) => {
+    let player = req.body.player;
+    let id = req.body.id;
+    db('Player').where({id: id}).update(player).then((data) => {
+        res.json(data);
+    }).catch((err) => {
+        console.log(err)
+    })
+})
+
 app.listen(port, () => {
     console.log(`App running on port ${port}.`)
 })
-
-
-
-
-
-
-
-
-// const cors = require('cors');
-// const bodyParser = require('body-parser');
-// const http = require('http');
-// const apiRoutes = require('./api/api-routes')
-// // import bodyParser from 'body-parser';
-// // import http from 'http';
-// // import apiRoutes from './api/api-routes';
-// // import path from 'path';
-// // import "./init/initialise";
-//
-// // Constants
-// const PORT = 3001;
-// const express = require('express');
-// const path = require("path");
-//
-// // App
-// const app = express();
-// app.use(bodyParser.json());
-//
-// if (process.env.ENABLE_CORS === 'true') {
-//     console.log("Enabling cors")
-//     app.use(cors({
-//         origin: 'http://admin.lsd.test', optionsSuccessStatus: 200
-//     }));
-// }
-//
-// const server = http.createServer(app);
-//
-// app.use('/api', apiRoutes);
-//
-// app.use(express.static(path.join(__dirname, '..', 'public')));
-// app.get('/', function (req, res) {
-//     res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
-// });
-//
-// server.listen(PORT, '0.0.0.0', function listening() {
-//     console.log('Running on http://localhost:%d', server.address().port);
-// });
-//
