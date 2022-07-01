@@ -51,6 +51,11 @@ export class Home extends React.Component {
                                     columns={this.state.columns}
                                     pageSize={5}
                                     rowsPerPageOptions={[5]}
+                                    initialState={{
+                                        sorting: {
+                                            sortModel: [{ field: 'formattedDate', sort: 'desc' }],
+                                        },
+                                    }}
                             />
                         </div> : null}
                     </Form>

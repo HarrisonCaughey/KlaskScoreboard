@@ -61,6 +61,11 @@ export class PlayerStats extends React.Component {
                                             columns={this.state.columns}
                                             pageSize={5}
                                             rowsPerPageOptions={[5]}
+                                            initialState={{
+                                                sorting: {
+                                                    sortModel: [{ field: 'wlr', sort: 'desc' }],
+                                                },
+                                            }}
                                     />
                                 </div> : null}
                     </Form>
