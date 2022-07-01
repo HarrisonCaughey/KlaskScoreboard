@@ -1,6 +1,7 @@
 import React from "react";
-import {Dropdown, Form, Table} from "react-bootstrap";
-import {saveGame} from "../services/api";
+import Select from "react-select";
+import {Col, Dropdown, Form, Row, Table} from "react-bootstrap";
+import {saveGame, getPlayers} from "../services/api";
 import toastr from "toastr"
 
 export class RecordGame extends React.Component {
@@ -12,6 +13,7 @@ export class RecordGame extends React.Component {
             playerOne: null,
             playerTwo: null,
             score: [["", ""], ["", ""], ["", ""], ["", ""], ["", ""]],
+            players: null
         }
         this.updatePlayerOne = this.updatePlayerOne.bind(this);
         this.updatePlayerTwo = this.updatePlayerTwo.bind(this);
@@ -21,40 +23,89 @@ export class RecordGame extends React.Component {
         this.playerOneWins = this.playerOneWins.bind(this);
     }
 
+    componentDidMount() {
+        getPlayers().then((players) => {
+            for (let i = 0; i < players.data.length; i++) {
+                players.data[i].label = `${players.data[i].name}`;
+                players.data[i].value = `${players.data[i].id}`;
+            }
+            this.setState({ players: players.data });
+        })
+    }
+
     submit() {
         if (this.validFields()) {
             let playerOneVictory = this.playerOneWins();
             let game = {
-                player_one: this.state.playerOne,
-                player_two: this.state.playerTwo,
+                player_one: this.state.playerOne.id,
+                player_two: this.state.playerTwo.id,
                 player_one_win: playerOneVictory,
                 score: this.formatScore(),
                 date_played: new Date().toISOString(),
             }
-            console.log(game)
             try {
                 saveGame(game).then((res) => {
-                    console.log(res)
+                    if ((this.state.playerOne.name === "Harrison" && game.player_one_win) ||
+                        (this.state.playerTwo.name === "Harrison" && !game.player_one_win)) {
+                        toastr.success("Game recorded, another effortless victory for Harrison")
+                    } else if ((this.state.playerOne.name === "Harrison" && !game.player_one_win) ||
+                            (this.state.playerTwo.name === "Harrison" && game.player_one_win)) {
+                        toastr.success("Game recorded, you'll get em' next time Harrison")
+                    } else {
+                        toastr.success("Game recorded")
+                    }
+
+                    // Update player info
+
                 })
             }
             catch {
-                console.log("Error saving a game")
+                toastr.error("Error recording game")
             }
         }
     }
 
+    isDraw() {
+        let playerOneWins = 0;
+        for (let i = 0; i < this.state.rounds; i++) {
+            let [score1, score2] = this.state.score[i];
+            if (score1 > score2) {
+                playerOneWins++;
+            }
+        }
+        return this.state.rounds - playerOneWins === playerOneWins;
+    }
+
     validFields() {
         try {
-            if (!(this.state.playerOne && this.state.playerTwo)) {
+            if (!(this.state.playerOne && this.state.playerTwo) ||
+                    !(this.state.playerOne.name && this.state.playerTwo.name)) {
                 toastr.error("Invalid Player Names")
                 return false;
             }
             for (let i = 0; i < this.state.rounds; i++) {
-                let [score1, score2] = this.state.score[i]
-                if (score1 !== "6" && score2 !== "6") {
-                    toastr.error("Invalid scores: at least one score for each round must be 6")
+                try {
+                    let [score1, score2] = this.state.score[i]
+                    if (score1 === "6" && score2 === "6") {
+                        toastr.error("Both players can't win a round");
+                        return false;
+                    }
+                    if (score1 !== "6" && score2 !== "6") {
+                        toastr.error("Invalid scores: at least one score for each round must be 6")
+                        return false;
+                    }
+                    if (score1 === "" || score2 === "") {
+                        toastr.error("Invalid scores: both scores must have a value")
+                        return false;
+                    }
+                } catch {
+                    toastr.error(`Row ${i + 1} is missing a score`)
                     return false;
                 }
+            }
+            if (this.isDraw()) {
+                toastr.error(`Games can't result in a draw`)
+                return false;
             }
         } catch (e) {
             toastr.error("Unhandled error when validating fields")
@@ -82,12 +133,12 @@ export class RecordGame extends React.Component {
         return victories > losses;
     }
 
-    updatePlayerOne(change, event) {
-        this.setState({playerOne: event.target.value});
+    updatePlayerOne(value) {
+        this.setState({playerOne: value});
     }
 
-    updatePlayerTwo(change, event) {
-        this.setState({playerTwo: event.target.value});
+    updatePlayerTwo(value) {
+        this.setState({playerTwo: value});
     }
 
     updateRounds(event) {
@@ -118,7 +169,7 @@ export class RecordGame extends React.Component {
             <div>
                 <Form style={{padding: 100}}>
                     <Form.Group className="mb-3" controlId="formRounds">
-                        <Form.Label>{"Rounds Played:  "}</Form.Label>
+                        <Form.Label>Rounds Played:</Form.Label>
                         <Dropdown style={{paddingLeft: 5}}>
                             <Dropdown.Toggle variant="success" id="dropdown-basic">
                                 {this.state.rounds}
@@ -133,26 +184,47 @@ export class RecordGame extends React.Component {
                         </Dropdown>
                     </Form.Group>
 
-                    <div>
-                    <Form.Group className="mb-3" controlId="formPlayerOne">
-                        <Form.Label>Player One:</Form.Label>
-                        <Form.Control type="value" placeholder="Harrison" aria-required="true" onChange={this.updatePlayerOne.bind(this, 'value')}/>
-                    </Form.Group>
-                    </div>
-                    <div>
-                    <Form.Group className="mb-3" controlId="formPlayerTwo">
-                        <Form.Label>Player Two:</Form.Label>
-                        <Form.Control type="text" placeholder="Khalil" aria-required="true" onChange={this.updatePlayerTwo.bind(this, 'value')}/>
-                    </Form.Group>
-                    </div>
-                    <Form.Group className="mb-3" controlId="formPlayerTwo">
+                    <Row className="mb-3">
+                        <Form.Group as={Col}>
+                            <Form.Label>Player One</Form.Label>
+                            { this.state.players ?
+                                    this.state.playerTwo ?
+                                    <Select options={this.state.players.filter(player => player.name !== this.state.playerTwo.name)}
+                                            key={this.state.players}
+                                            onChange={(value) => this.updatePlayerOne(value)}>
+                                    </Select>
+                                            :
+                                    <Select options={this.state.players} key={this.state.players}
+                                            onChange={(value) => this.updatePlayerOne(value)}>
+                                    </Select>
+                                    : null
+                            }
+                        </Form.Group>
+                        <Form.Group as={Col}>
+                            <Form.Label>Player Two</Form.Label>
+                            { this.state.players ?
+                                    this.state.playerOne ?
+                                    <Select options={this.state.players.filter(player => player.name !== this.state.playerOne.name)}
+                                            key={this.state.players}
+                                            onChange={(value) => this.updatePlayerTwo(value)}>
+                                    </Select>
+                                            :
+                                    <Select options={this.state.players} key={this.state.players}
+                                            onChange={(value) => this.updatePlayerTwo(value)}>
+                                    </Select>
+                                    : null
+                            }
+                        </Form.Group>
+                    </Row>
+
+                    <Form.Group className="mb-3" controlId="formPlayers">
                         <Form.Label>Scores:</Form.Label>
                         <Table>
                             <thead>
                             <tr>
                                 <th>Round</th>
-                                <th>{this.state.playerOne || "Player One"}</th>
-                                <th>{this.state.playerTwo || "Player Two"}</th>
+                                <th>{this.state.playerOne ? this.state.playerOne.name : "Player One"}</th>
+                                <th>{this.state.playerTwo ? this.state.playerTwo.name : "Player Two"}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -182,8 +254,8 @@ export class RecordGame extends React.Component {
                         </Table>
                     </Form.Group>
 
-                    <footer className="modal-card-foot">
-                        <a className="button" onClick={this.submit}>
+                    <footer>
+                        <a className="button" href="/#" onClick={this.submit}>
                             Submit
                         </a>
                     </footer>

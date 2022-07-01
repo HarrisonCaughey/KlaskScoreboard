@@ -17,3 +17,11 @@ export function saveGame(game) {
             console.error(err);
         })
 }
+
+export function getPlayers() {
+    return axios.get(`${serverPath}/api/players`).then((players) => {
+        return players;
+    }).catch((err) => {
+        console.error(err);
+    })
+}

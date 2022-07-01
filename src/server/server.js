@@ -9,6 +9,7 @@ const db = knex({
         user: process.env.DATABASE_USERNAME,
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE,
+        port: 5433,
     },
 });
 
@@ -27,9 +28,11 @@ app.use(function (req, res, next) {
 });
 
 app.get('/api/games', (req, res) => {
-    console.log(`Getting games in server.js`)
-    db.select('*')
-            .from('game')
+    console.log(`Getting games with player names in server.js`)
+    db.select('Game.id', 'Game.date_played', 'Game.player_one', 'Game.player_two', 'Game.score', 'Game.player_one_win', 'Player.name as p1_name', 'Player2.name as p2_name')
+            .from('Game')
+            .leftJoin('Player', 'Game.player_one', 'Player.id')
+            .leftJoin('Player as Player2', 'Game.player_two', 'Player2.id')
             .then((data) => {
                 console.log(data);
                 res.json(data);
@@ -39,17 +42,43 @@ app.get('/api/games', (req, res) => {
             });
 })
 
+// app.get('/api/games', (req, res) => {
+//     console.log(`Getting games in server.js`)
+//     db.select('*')
+//             .from('Game')
+//             .then((data) => {
+//                 console.log(data);
+//                 res.json(data);
+//             })
+//             .catch((err) => {
+//                 console.log(err);
+//             });
+// })
+
 app.post('/api/games', (req, res) => {
     console.log(`Posting to games in server.js`)
     console.log(req)
     let game = req.body.game
-    db('game').insert(
+    db('Game').insert(
             {player_one: game.player_one,
                 player_two: game.player_two,
                 player_one_win: game.player_one_win,
                 score: game.score,
                 date_played: game.date_played,
     })
+            .then((data) => {
+                console.log(data);
+                res.json(data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+})
+
+app.get('/api/players', (req, res) => {
+    console.log(`Getting players in server.js`)
+    db.select('*')
+            .from('Player')
             .then((data) => {
                 console.log(data);
                 res.json(data);
