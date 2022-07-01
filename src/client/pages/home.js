@@ -41,25 +41,25 @@ export class Home extends React.Component {
 
     render() {
         return (
-                <div>
-                    <Form style={{padding: 100}}>
-                        <Form.Label>Game History:</Form.Label>
-                        {   this.state.games && this.state.games.length !== 0 ?
-                            <div style={{height: 400, width: '100%'}}>
-                            <DataGrid
-                                    rows={this.state.games}
-                                    columns={this.state.columns}
-                                    pageSize={5}
-                                    rowsPerPageOptions={[5]}
-                                    initialState={{
-                                        sorting: {
-                                            sortModel: [{ field: 'formattedDate', sort: 'desc' }],
-                                        },
-                                    }}
-                            />
-                        </div> : null}
-                    </Form>
-                </div>
+            <div>
+                <Form style={{padding: 100}}>
+                    <Form.Label>Game History:</Form.Label>
+                    {   this.state.games && this.state.games.length !== 0 ?
+                        <div style={{height: 400, width: '100%'}}>
+                        <DataGrid
+                                rows={this.state.games}
+                                columns={this.state.columns}
+                                pageSize={5}
+                                rowsPerPageOptions={[5]}
+                                initialState={{
+                                    sorting: {
+                                        sortModel: [{ field: 'formattedDate', sort: 'desc' }],
+                                    },
+                                }}
+                        />
+                    </div> : null}
+                </Form>
+            </div>
         )
     }
 }
