@@ -12,6 +12,7 @@ const db = knex({
         port: 5433,
     },
 });
+const allowedOrigins = ['http://localhost:3000', 'https://harrisoncaughey.github.io']
 
 const app = express()
 const port = 3001
@@ -21,7 +22,10 @@ app.use(express.json());
 // CORS implemented so that we don't get errors when trying to access the server from a different server location
 app.use(cors());
 app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers');
     next();
