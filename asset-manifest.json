@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/KlaskScoreboard/static/css/main.a18540d1.css",
-    "main.js": "/KlaskScoreboard/static/js/main.4648609d.js",
+    "main.js": "/KlaskScoreboard/static/js/main.4b7119b5.js",
     "static/js/787.c1112931.chunk.js": "/KlaskScoreboard/static/js/787.c1112931.chunk.js",
     "index.html": "/KlaskScoreboard/index.html",
     "main.a18540d1.css.map": "/KlaskScoreboard/static/css/main.a18540d1.css.map",
-    "main.4648609d.js.map": "/KlaskScoreboard/static/js/main.4648609d.js.map",
+    "main.4b7119b5.js.map": "/KlaskScoreboard/static/js/main.4b7119b5.js.map",
     "787.c1112931.chunk.js.map": "/KlaskScoreboard/static/js/787.c1112931.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a18540d1.css",
-    "static/js/main.4648609d.js"
+    "static/js/main.4b7119b5.js"
   ]
 }
