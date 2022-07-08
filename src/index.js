@@ -3,9 +3,22 @@ import ReactDOM from 'react-dom/client';
 //import './index.css';
 import reportWebVitals from './reportWebVitals';
 import {App} from './client/app.js'
+import {HashRouter, BrowserRouter as Router} from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render( <App />);
+root.render(
+    <React.StrictMode>
+        {   process.env.NODE_ENV !== 'production' ?
+                <Router>
+                    <App/>
+                </Router>
+            :
+                <HashRouter>
+                    <App/>
+                </HashRouter>
+        }
+    </React.StrictMode>
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

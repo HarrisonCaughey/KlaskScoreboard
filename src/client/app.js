@@ -4,6 +4,11 @@ import {getGames} from "./services/api";
 
 import "bulma";
 import "toastr/toastr.scss";
+import {Route, Switch} from "react-router-dom";
+import {RecordGame} from "./pages/record-game";
+import {Scoreboard} from "./pages/scoreboard";
+import {PlayerStats} from "./pages/player-stats";
+import {Home} from "./pages/home";
 
 
 export class App extends React.Component {
@@ -22,6 +27,12 @@ export class App extends React.Component {
     render() {
         return <div>
             <NavBar/>
+            <Switch>
+                <Route path="/record" component={RecordGame}/>
+                <Route path="/scoreboard" component={Scoreboard}/>
+                <Route path="/stats" component={PlayerStats}/>
+                <Route exact path="/" component={Home}/>
+            </Switch>
             <button onClick={this.testFunction}>Test Button</button>
         </div>;
     }

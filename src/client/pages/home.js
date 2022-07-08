@@ -45,12 +45,12 @@ export class Home extends React.Component {
                 <Form style={{padding: 100}}>
                     <Form.Label>Game History:</Form.Label>
                     {   this.state.games && this.state.games.length !== 0 ?
-                        <div style={{height: 400, width: '100%'}}>
+                        <div style={{height: 420, width: '100%'}}>
                         <DataGrid
                                 rows={this.state.games}
                                 columns={this.state.columns}
-                                pageSize={5}
-                                rowsPerPageOptions={[5]}
+                                pageSize={6}
+                                rowsPerPageOptions={[6]}
                                 initialState={{
                                     sorting: {
                                         sortModel: [{ field: 'formattedDate', sort: 'desc' }],

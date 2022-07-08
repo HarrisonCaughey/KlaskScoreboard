@@ -1,16 +1,12 @@
 import React from "react";
 import {
-    BrowserRouter as Router,
     Switch,
     Route,
+    Link
 } from "react-router-dom";
 import {Navbar, Container, Nav} from "react-bootstrap";
-import {Home} from "./home";
-import {Scoreboard} from "./scoreboard";
-import {PlayerStats} from "./player-stats";
 import 'bootstrap/dist/css/bootstrap.css';
 import "toastr/toastr.scss";
-import {RecordGame} from "./record-game";
 
 export class NavBar extends React.Component {
 
@@ -19,35 +15,27 @@ export class NavBar extends React.Component {
         this.state = {environment : null};
     }
 
+    getHost() {
+        if (process.env.NODE_ENV !== 'development') {
+            return "https://harrisoncaughey.github.io/KlaskScoreboard/#"
+        } else {
+            return ""
+        }
+    }
+
     render() {
+        console.log(process.env)
         return (
-            <Router>
-                <Navbar bg="dark" variant="dark" expand="lg">
-                    <Container>
-                        <Nav className="me-auto">
-                            <Navbar.Brand href="/">Home</Navbar.Brand>
-                            <Navbar.Toggle/>
-                            <Nav.Link href="/record">Record Results</Nav.Link>
-                            <Nav.Link href="/scoreboard">Scoreboard</Nav.Link>
-                            <Nav.Link href="/stats">Player Stats</Nav.Link>
-                        </Nav>
-                    </Container>
-                </Navbar>
-                <Switch>
-                    <Route exact path="/">
-                        <Home />
-                    </Route>
-                    <Route path="/record">
-                        <RecordGame />
-                    </Route>
-                    <Route path="/scoreboard">
-                        <Scoreboard />
-                    </Route>
-                    <Route path="/stats">
-                        <PlayerStats />
-                    </Route>
-                </Switch>
-            </Router>
+            <Navbar bg="dark" variant="dark" expand="lg">
+                <Container>
+                    <Nav className="me-auto">
+                        <Nav.Link draggable={false} href={`${this.getHost()}/`}>Home</Nav.Link>
+                        <Nav.Link draggable={false} href={`${this.getHost()}/record`}>Record Results</Nav.Link>
+                        <Nav.Link draggable={false} href={`${this.getHost()}/scoreboard`}>Scoreboard</Nav.Link>
+                        <Nav.Link draggable={false} href={`${this.getHost()}/stats`}>Player Stats</Nav.Link>
+                    </Nav>
+                </Container>
+            </Navbar>
         )
     }
 }
