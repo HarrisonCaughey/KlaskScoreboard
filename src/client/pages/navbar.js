@@ -1,12 +1,9 @@
 import React from "react";
-import {
-    Switch,
-    Route,
-    Link
-} from "react-router-dom";
 import {Navbar, Container, Nav} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.css';
 import "toastr/toastr.scss";
+import Logo from '../../ihateyou.jpeg';
+
 
 export class NavBar extends React.Component {
 
@@ -24,10 +21,12 @@ export class NavBar extends React.Component {
     }
 
     render() {
-        console.log(process.env)
         return (
-            <Navbar bg="dark" variant="dark" expand="lg">
+            <Navbar bg="dark" variant="dark" expand="lg" >
                 <Container>
+                    <Navbar.Brand href="/">
+                        <img height={60} width={50} className="img-responsive"  src={Logo} alt=""/>
+                    </Navbar.Brand>
                     <Nav className="me-auto">
                         <Nav.Link draggable={false} href={`${this.getHost()}/`}>Home</Nav.Link>
                         <Nav.Link draggable={false} href={`${this.getHost()}/record`}>Record Results</Nav.Link>

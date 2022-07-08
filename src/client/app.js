@@ -1,5 +1,5 @@
 import React from "react";
-import {NavBar} from "./pages/header";
+import {NavBar} from "./pages/navbar";
 import {getGames} from "./services/api";
 
 import "bulma";
