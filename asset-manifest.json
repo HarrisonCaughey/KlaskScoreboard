@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.a18540d1.css",
-    "main.js": "/static/js/main.5b96d8e9.js",
-    "static/js/787.c1112931.chunk.js": "/static/js/787.c1112931.chunk.js",
-    "index.html": "/index.html",
-    "main.a18540d1.css.map": "/static/css/main.a18540d1.css.map",
-    "main.5b96d8e9.js.map": "/static/js/main.5b96d8e9.js.map",
-    "787.c1112931.chunk.js.map": "/static/js/787.c1112931.chunk.js.map"
+    "main.css": "/KlaskScoreboard/static/css/main.a18540d1.css",
+    "main.js": "/KlaskScoreboard/static/js/main.b0dee80c.js",
+    "static/js/787.c1112931.chunk.js": "/KlaskScoreboard/static/js/787.c1112931.chunk.js",
+    "index.html": "/KlaskScoreboard/index.html",
+    "main.a18540d1.css.map": "/KlaskScoreboard/static/css/main.a18540d1.css.map",
+    "main.b0dee80c.js.map": "/KlaskScoreboard/static/js/main.b0dee80c.js.map",
+    "787.c1112931.chunk.js.map": "/KlaskScoreboard/static/js/787.c1112931.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a18540d1.css",
-    "static/js/main.5b96d8e9.js"
+    "static/js/main.b0dee80c.js"
   ]
 }
