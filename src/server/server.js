@@ -9,7 +9,7 @@ const db = knex({
         user: process.env.DATABASE_USERNAME,
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE,
-        port: 5433,
+        port: process.env.PORT,
     },
 });
 const allowedOrigins = ['http://localhost:3000', 'https://harrisoncaughey.github.io']
