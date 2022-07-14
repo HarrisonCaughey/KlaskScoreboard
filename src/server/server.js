@@ -12,7 +12,7 @@ const db = knex({
         port: process.env.PORT,
     },
 });
-const allowedOrigins = ['http://localhost:3000', 'https://harrisoncaughey.github.io']
+const allowedOrigins = ['http://localhost:3000', 'https://harrisoncaughey.github.io', 'https://klask-scoreboard.vercel.app']
 
 const app = express()
 const port = 3001
@@ -32,6 +32,7 @@ app.use(function (req, res, next) {
 });
 
 app.get('/api/games', (req, res) => {
+    console.log("Getting games")
     db.select('Game.id', 'Game.date_played', 'Game.player_one', 'Game.player_two', 'Game.score', 'Game.player_one_win', 'Player.name as p1_name', 'Player2.name as p2_name')
             .from('Game')
             .leftJoin('Player', 'Game.player_one', 'Player.id')
