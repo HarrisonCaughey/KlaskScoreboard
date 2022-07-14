@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "main": "src/index.js",
-  "homepage": "https://harrisoncaughey.github.io/KlaskScoreboard/",
+  "homepage": "https://klask-scoreboard.vercel.app/",
   "dependencies": {
     "@emotion/styled": "^11.9.3",
     "@mui/material": "^5.8.6",
