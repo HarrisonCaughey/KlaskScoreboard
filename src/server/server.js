@@ -9,7 +9,7 @@ const db = knex({
         user: process.env.DATABASE_USERNAME,
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE,
-        port: process.env.PORT || 3001,
+        port: 5432
     },
 });
 const allowedOrigins = ['http://localhost:3000', 'https://harrisoncaughey.github.io', 'https://klask-scoreboard.vercel.app', 'http://localhost:5432']
