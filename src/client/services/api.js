@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const serverPath = 'http://localhost:3001'
+const serverPath = process.env.NODE_ENV !== 'development' ? "https://harrisoncaughey.github.io/KlaskScoreboard/#" : 'http://localhost:3001';
 
 export function getGames() {
     return axios.get(`${serverPath}/api/games`).then((games) => {

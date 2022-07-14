@@ -13,6 +13,7 @@ export class NavBar extends React.Component {
     }
 
     getHost() {
+        console.log(process.env.NODE_ENV)
         if (process.env.NODE_ENV !== 'development') {
             return "https://harrisoncaughey.github.io/KlaskScoreboard/#"
         } else {
@@ -24,7 +25,7 @@ export class NavBar extends React.Component {
         return (
             <Navbar bg="dark" variant="dark" expand="lg" >
                 <Container>
-                    <Navbar.Brand href="/">
+                    <Navbar.Brand href={`${this.getHost()}/`}>
                         <img height={60} width={50} className="img-responsive"  src={Logo} alt=""/>
                     </Navbar.Brand>
                     <Nav className="me-auto">
