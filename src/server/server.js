@@ -9,14 +9,15 @@ const db = knex({
         user: process.env.DATABASE_USERNAME,
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE,
-        port: process.env.PORT,
+        port: process.env.PORT || 3001,
     },
 });
-const allowedOrigins = ['http://localhost:3000', 'https://harrisoncaughey.github.io', 'https://klask-scoreboard.vercel.app']
+const allowedOrigins = ['http://localhost:3000', 'https://harrisoncaughey.github.io', 'https://klask-scoreboard.vercel.app', 'http://localhost:5432']
 
 const app = express()
-const port = 3001
+const port = process.env.PORT || 3001
 
+app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 // CORS implemented so that we don't get errors when trying to access the server from a different server location
