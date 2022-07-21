@@ -1,11 +1,19 @@
-const {db} = require('../libs/database');
+const knex = require('knex');
+require('dotenv').config();
+const db = knex({
+    client: 'pg',
+    connection: {
+        host: process.env.DATABASE_HOST,
+        user: process.env.DATABASE_USERNAME,
+        password: process.env.DATABASE_PASSWORD,
+        database: process.env.DATABASE,
+        port: 5432
+    },
+});
 
 async function games(req, res) {
     console.log("api/games endpoint hit in serverless function")
     console.log(db)
-    console.log("before db query")
-    console.log(await db.query("SELECT * from games;"))
-    console.log("after db query")
     if (req.method === 'GET') {
         // call get method
         try {
