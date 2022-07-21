@@ -1,14 +1,17 @@
 const {db} = require('libs/database');
 
 async function games(req, res) {
+    console.log("serverless games function hit")
     if (req.method === 'GET') {
         // call get method
         try {
             let games = await getGames();
+            console.log(games)
             res.setHeader('Content-Type', 'application/json');
             res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
             res.json(games);
             res.send(games);
+            return res;
         } catch (error) {
             console.log(error.message);
             res.status(500).json({ success: false, message: error.message });

@@ -4,6 +4,7 @@ const serverPath = process.env.NODE_ENV !== 'development' ? "https://klask-score
 
 export function getGames() {
     return axios.get(`${serverPath}/api/games`).then((games) => {
+        console.log(games)
         return games;
     }).catch((err) => {
         console.error(err);
