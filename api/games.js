@@ -22,6 +22,7 @@ async function games(req, res) {
             console.log(games)
             res.setHeader('Content-Type', 'application/json');
             res.status(200).json(games);
+
         } catch (error) {
             console.log(error.message);
             res.status(500).json({ success: false, message: error.message });
@@ -38,6 +39,7 @@ async function games(req, res) {
     } else {
         res.status(400).send("Method not allowed");
     }
+    await db.destroy();
 }
 
 async function getGames() {
