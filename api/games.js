@@ -22,6 +22,7 @@ async function games(req, res) {
             console.log(games)
             res.setHeader('Content-Type', 'application/json');
             res.status(200).json(games);
+            return games;
 
         } catch (error) {
             console.log(error.message);
