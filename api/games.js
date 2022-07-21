@@ -42,7 +42,7 @@ async function games(req, res) {
 
 async function getGames() {
     console.log("Getting games")
-    return db.select('Game.id', 'Game.date_played', 'Game.player_one', 'Game.player_two', 'Game.score', 'Game.player_one_win', 'Player.name as p1_name', 'Player2.name as p2_name')
+    return await db.select('Game.id', 'Game.date_played', 'Game.player_one', 'Game.player_two', 'Game.score', 'Game.player_one_win', 'Player.name as p1_name', 'Player2.name as p2_name')
             .from('Game')
             .leftJoin('Player', 'Game.player_one', 'Player.id')
             .leftJoin('Player as Player2', 'Game.player_two', 'Player2.id')
