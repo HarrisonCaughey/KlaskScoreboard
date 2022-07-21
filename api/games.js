@@ -3,7 +3,9 @@ const {db} = require('../libs/database');
 async function games(req, res) {
     console.log("api/games endpoint hit in serverless function")
     console.log(db)
+    console.log("before db query")
     console.log(await db.query("SELECT * from games;"))
+    console.log("after db query")
     if (req.method === 'GET') {
         // call get method
         try {
