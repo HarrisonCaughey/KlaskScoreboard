@@ -47,6 +47,8 @@ async function getGames() {
             .leftJoin('Player', 'Game.player_one', 'Player.id')
             .leftJoin('Player as Player2', 'Game.player_two', 'Player2.id')
             .then((data) => {
+                console.log("got data")
+                console.log(data)
                 return data
             })
             .catch((err) => {
