@@ -17,11 +17,11 @@ async function games(req, res) {
     if (req.method === 'GET') {
         // call get method
         try {
+            console.log("getting games")
             let games = await getGames();
+            console.log(games)
             res.setHeader('Content-Type', 'application/json');
-            res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
-            res.json(games);
-            res.send(games);
+            res.status(200).json(games);
         } catch (error) {
             console.log(error.message);
             res.status(500).json({ success: false, message: error.message });
