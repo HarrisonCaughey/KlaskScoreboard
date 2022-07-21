@@ -2,32 +2,20 @@ const {db} = require('libs/database');
 
 module.exports = async (req, res) => {
     console.log("serverless games function hit")
-    if (req.method === 'GET') {
-        // call get method
-        try {
-            let games = await getGames();
+    let games = await db.select('Game.id', 'Game.date_played', 'Game.player_one', 'Game.player_two', 'Game.score', 'Game.player_one_win', 'Player.name as p1_name', 'Player2.name as p2_name')
+            .from('Game')
+            .leftJoin('Player', 'Game.player_one', 'Player.id')
+            .leftJoin('Player as Player2', 'Game.player_two', 'Player2.id')
+            .then((data) => {
+                return data
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
             console.log(games)
             res.setHeader('Content-Type', 'application/json');
-            res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
-            res.json(games);
-            res.send(games);
-            return res;
-        } catch (error) {
-            console.log(error.message);
-            res.status(500).json({ success: false, message: error.message });
-        }
-    } else if (req.method === 'POST') {
-        // call post method
-        try {
-            let game = req.body.game;
-            await postGame(game);
-        } catch (error) {
-            console.log(error.message);
-            res.status(500).json({ success: false, message: error.message });
-        }
-    } else {
-        res.status(400).send("Method not allowed");
-    }
+            res.status(200).json(games);
 }
 
 async function getGames() {
