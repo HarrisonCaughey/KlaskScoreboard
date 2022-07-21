@@ -1,6 +1,6 @@
 const {db} = require('libs/database');
 
-async function games(req, res) {
+module.exports = async function games(req, res) {
     console.log("serverless games function hit")
     if (req.method === 'GET') {
         // call get method
@@ -58,5 +58,3 @@ async function postGame(game) {
                 console.log(err);
             });
 }
-
-export default games;
