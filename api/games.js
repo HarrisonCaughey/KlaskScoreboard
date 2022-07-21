@@ -13,7 +13,7 @@ const db = knex({
 
 async function games(req, res) {
     console.log("api/games endpoint hit in serverless function")
-    console.log(db)
+    console.log(req)
     if (req.method === 'GET') {
         // call get method
         try {
