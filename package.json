@@ -24,6 +24,7 @@
     "knex": "^2.1.0",
     "mui": "^0.0.1",
     "pg": "^8.7.3",
+    "pgbouncer": "^1.0.1",
     "postgres": "^3.2.4",
     "react": "^18.2.0",
     "react-bootstrap": "^2.4.0",
